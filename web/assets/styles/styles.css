@@ -1,0 +1,110 @@
+/* ----------Checklist Btn---------- */
+.popover-header {
+  background-color: white;
+  font: 1em sans-serif;
+  color: #7e7e7e;
+  text-align: center;
+  vertical-align: middle;
+  border-bottom: 0.5px solid #E0E0E0;
+}
+.popover {
+  border: 0.5px solid #E0E0E0;
+}
+#checklist_title_input:hover {
+  background-color: #EDEDED;
+}
+#checklist_title_input:focus {
+  background-color: white;
+}
+.checklist_popover_form_label {
+  font-weight: bold;
+}
+
+
+
+
+/* ----------Checklist Header---------- */
+.icon-span {
+  font-size: 1.2em;
+}
+.checklist-title {
+  padding-top: 5px;
+}
+.checklist-division {
+  margin-top: 5px;
+  size: 8px;
+  width: 90%;
+  text-align: center;
+}
+
+
+
+
+
+/* ----------Checklist Items---------- */
+
+/* Override default checkbox style of checkbox */
+input[type='checkbox'] {
+  /* Remove default style for most browsers */
+  -webkit-appearance: none;
+  /* Remove default style for Firefox */
+  -moz-appearance: none;
+
+  /* Init style */
+  width: 1.2em;
+  height: 1.2em;
+  vertical-align: middle;
+  border: 0.5px solid #E0E0E0;
+  border-radius: 3px;
+}
+/* Init style for IE & Edge, should be same as above */
+input[type='checkbox']::-ms-check {
+  width: 1.2em;
+  height: 1.2em;
+  vertical-align: middle;
+  border: 0.5px solid #E0E0E0;
+  border-radius: 3px;
+}
+
+
+input[type="checkbox"]:hover {
+  border: 1px solid #4d4d4d;
+  box-shadow: 0;
+  background-color: #EDEDED;
+}
+input[type="checkbox"]:focus {
+  outline: none;
+}
+
+
+/* The box after checked */
+input[type='checkbox']:checked {
+  border: 1px solid #4d4d4d;
+  box-shadow: 0;
+  background-color: #EDEDED;
+}
+/* The check symbol upon the checked box */
+input[type='checkbox']:checked:before {
+  padding-left: 2px;
+  content: "✔";
+  color: #4d4d4d;
+  font:  1.1em sans-serif;
+  text-align: center;
+}
+
+
+.content-input {
+  /* width: 90%; */
+  border: none;
+  vertical-align: middle;
+}
+
+.item-add-btn {
+  margin-top: 5px;
+  margin-left: 2.5em;
+}
+
+.popover .arrow {
+  display: none;
+}
+
