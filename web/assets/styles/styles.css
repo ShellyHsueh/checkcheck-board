@@ -24,16 +24,14 @@
 
 
 /* ----------Checklist Header---------- */
-.icon-span {
-  font-size: 1.2em;
-}
 .checklist-title {
   padding-top: 5px;
 }
 .checklist-division {
-  margin-top: 5px;
+  margin-top: .1rem;
+  margin-bottom: .1rem;
   size: 8px;
-  width: 90%;
+  width: 100%;
   text-align: center;
 }
 
@@ -92,19 +90,33 @@ input[type='checkbox']:checked:before {
   text-align: center;
 }
 
-
+.handle {
+  cursor: -webkit-grab; 
+  cursor: all-scroll;
+}
+.delete {
+  cursor: -webkit-grab; 
+  cursor: pointer;
+}
 .content-input {
-  /* width: 90%; */
+  width: 80%;
   border: none;
   vertical-align: middle;
 }
-
 .item-add-btn {
   margin-top: 5px;
-  margin-left: 2.5em;
+  margin-left: 3.5em;
 }
-
+.new-item {
+  cursor: -webkit-grab; 
+  cursor: pointer;
+}
 .popover .arrow {
   display: none;
 }
 
+
+/* Sortable items */
+.items-container .sortable-highlight {
+  border: 0.7px solid #ccc;
+}
