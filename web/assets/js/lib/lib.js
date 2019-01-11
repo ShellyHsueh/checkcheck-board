@@ -12,8 +12,3 @@
     return rendered;
   }
 })();
-
-
-function convertToNode(html_str) {
-  return document.createRange().createContextualFragment(html_str);
-}

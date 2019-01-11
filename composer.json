@@ -1,6 +1,6 @@
 {
   "require" : {
-
+    "php-activerecord/php-activerecord": "^1.2"
   },
   "require-dev": {
     
