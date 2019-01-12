@@ -3,40 +3,94 @@ $(document).ready(function() {
 });
 
 
-function main() {
-  var data = {
-    checklist_id: 13,
-    checklist_title: 'Checklist 1',
-    events: {
-      'onDelete': onDelete,
-      'onAdd': onAdd
-    },
-    items: [
-      {
-        id: 12,
-        checked: 'checked',
-        content: '123'
+
+function main(data) {
+  var checklist_items_api = 'api/checklist_items.php'; // relative path to the html page
+      data = {
+        checklist_id: '5c38a344d7725',
+        checklist_title: 'Checklist 1',
+        events: {
+          'onItemDelete': onItemDelete,
+          'onItemUpdate': onItemUpdate
+        },
+        items: []
+      };
+
+
+  getItemsByChecklistId(data.checklist_id);
+
+
+  // Get items data from DB and render checklist
+  function getItemsByChecklistId(checklist_id) {
+    $.ajax({
+      type: 'POST',
+      url: checklist_items_api,
+      dataType: 'json',
+      data: {
+        functionname: 'getItemsByChecklistId',
+        arguments: checklist_id
       },
-      {
-        id: 13,
-        checked: '',
-        content: '456'
+      success: function(res, res_status) {
+        data.items = JSON.parse(res['result']);
+        setChecklist(data)
       }
-    ]
-  };
-
-
-  var ck_list = new CCB.uic.CheckList('checklists_container', data);
-
-
-  function onDelete(item_id) {
-    console.log(item_id)
+    });
   }
 
-  function onAdd(item_data) {
-    console.log(item_data)
+
+  function setChecklist(data) {
+    var ck_list = new CCB.uic.CheckList('checklists_container', data);
   }
 
+
+  function onItemDelete(item_el, item_id) {
+    if (item_id) {
+      $.ajax({
+        type: 'POST',
+        url: checklist_items_api,
+        dataType: 'json',
+        data: {
+          functionname: 'deleteItemByItemId',
+          arguments: item_id
+        },
+        success: function(res, res_status) {
+          if (res) {
+            $(item_el).remove();
+          }
+        },
+        error: function(xhr, ajaxOptions, throwError) {
+          alert('Sorry, failed to delete! :( Please refresh and try again.');
+          console.log(ajaxOptions)
+          console.log(throwError)
+        }
+      });
+    }
+  }
+
+
+
+  function onItemUpdate(item_form_el, item_data, updateItemElementData) {
+    $.ajax({
+      type: 'POST',
+      url: checklist_items_api,
+      dataType: 'json',
+      data: {
+        functionname: 'updateItem',
+        arguments: JSON.stringify(item_data)
+      },
+      success: function(res, res_status) {
+        var item_data = JSON.parse(res['result']);
+        updateItemElementData(item_form_el, item_data);
+      },
+      error: function(xhr, ajaxOptions, throwError) {
+        alert('Sorry, failed to update! :( Please try again.');
+        console.log(ajaxOptions)
+        console.log(throwError)
+      }
+    });
+
+  }
+  
 
 
   //--------------------------------------

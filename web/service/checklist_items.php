@@ -13,13 +13,19 @@ function getItemByItemId($item_id) {
 }
 
 
-// Input: Arrayjson of the changed fields (no need to be full item data)
+// Input: Arrayjson of the changed fields (requiring item_id; no need to provide full item data)
 // Return: Full data of the updated record
 function updateItem($new_data_json) {
   $new_data = json_decode($new_data_json, true);
+
+  // Create if no item id yet (means not in DB yet)
+  if (empty($new_data['id'])) {
+    return createItem($new_data);
+  }
+
   $db_item = ChecklistItems::find_by_id($new_data['id']);
 
-  // Create if not exists
+  // Create if not found in DB
   if (empty($db_item)) {
     return createItem($new_data);
   }

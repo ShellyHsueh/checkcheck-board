@@ -15,11 +15,7 @@ foreach ($folders as $folder) {
   require_once __DIR__ . '/' . $folder . '/init.php';
 }
 
-
-// Require all files in the current folder
-foreach (glob(__DIR__ . '/*.php') as $file) {
-  require_once $file;
-}
+require_once __DIR__.'/html_dependencies.php';
 
 
 ?>
