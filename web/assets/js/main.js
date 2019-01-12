@@ -11,7 +11,8 @@ function main(data) {
         checklist_title: 'Checklist 1',
         events: {
           'onItemDelete': onItemDelete,
-          'onItemUpdate': onItemUpdate
+          'onItemUpdate': onItemUpdate,
+          'onItemSorted': onItemSorted
         },
         items: []
       };
@@ -88,7 +89,23 @@ function main(data) {
         console.log(throwError)
       }
     });
+  }
 
+
+  // Input: {id: '....', order: 1}
+  function onItemSorted(item_data) {
+    $.ajax({
+      type: 'POST',
+      url: checklist_items_api,
+      dataType: 'json',
+      data: {
+        functionname: 'updateItem',
+        arguments: JSON.stringify(item_data)
+      },
+      success: function(res, res_status) {
+        // var item_data = JSON.parse(res['result']);
+      }
+    });
   }
   
 

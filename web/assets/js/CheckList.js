@@ -36,7 +36,7 @@
         ';
 
     var item_tpl = ' \
-          <form class="item-form" data-item_id="{{id}}" data-order="{{order}}" data-checklist_id="{{checklist_id}}"> \
+          <form class="item-form" data-item_id="{{id}}" data-order={{order}} data-checklist_id="{{checklist_id}}"> \
             <div class="form-check mt-1 p-0"> \
               <i class="handle collapse fas fa-grip-vertical fa-xs text-muted m-1"></i> \
               <input type="checkbox" class="shadow-sm mr-2" {{checked}}> \
@@ -70,9 +70,13 @@
     // Main functions
 
     function initChecklist(checklists_container_el, items) {
+      // Sort items by order
+      items.sort(function (a, b) {
+        return a.order - b.order;
+      });
+
       var item_forms = '';
       for (var i in items) {
-        // item_forms += lib.applyTemplate(item_tpl, items[i]);
         item_forms += lib.applyTemplate(item_tpl, { id: items[i].id,
                                                     checklist_id: items[i].checklist_id,
                                                     content: items[i].content,
@@ -94,7 +98,14 @@
         placeholder: "sortable-highlight",
         disable: true,
         axis: "y",
-        stop: function( event, ui ) { console.log(event) }
+        update: function(event, ui) {
+          var items = ui.item.parents('.items-container').children('.item-form');
+
+          for (var i=0; i < items.length; i++) {
+            items[i].dataset.order = i;
+            onItemSorted({ id: items[i].dataset.item_id, order: i });
+          }
+        }
       });
       $(items_container).disableSelection();
     }
@@ -179,7 +190,7 @@
       $(checklist_el).on('click', '.new-item',
         function(e) {
           var checklist_id = $(checklist_el).data('checklist_id'),
-              new_item_order = $(items_container_el).find('.item-form').length + 1,
+              new_item_order = $(items_container_el).find('.item-form').length,
               default_item_data = {
                 id: '',
                 checklist_id: checklist_id,
@@ -250,6 +261,11 @@
       if (typeof events.onItemUpdate === 'function') {
         events.onItemUpdate(item_form_el, item_data, updateItemElementData);
       }
+    }
+
+
+    function onItemSorted(item_data) {
+      events.onItemSorted(item_data);
     }
 
 
