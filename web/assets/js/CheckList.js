@@ -127,11 +127,16 @@
       // Show 'item-update-btn'
       $(items_container_el).on('focus', '.content-input, .item-update-btn', 
         function(e) {
-          var focused_item_form = $(this).parents('.item-form');
+          var focus_form = this;
 
-          $(focused_item_form).find('.handle').show();
-          $(focused_item_form).find('.delete').show();
-          $(focused_item_form).find('.item-update-btn').show();
+          // setTimeout to act in the same time as focusout event
+          setTimeout(function() {
+            var focused_item_form = $(focus_form).parents('.item-form');
+
+            $(focused_item_form).find('.handle').show();
+            $(focused_item_form).find('.delete').show();
+            $(focused_item_form).find('.item-update-btn').show();
+          }, 1);
         }
       );
 
@@ -143,8 +148,12 @@
 
           // setTimeout to wait for document.activeElement set
           setTimeout(function() {
-            // If new focused el is not input or add-btn
-            if ( !$(document.activeElement).is('.content-input, .item-update-btn') ) {
+            var new_focus_form = $(document.activeElement).parents('.item-form'),
+                blurred_form = $(blurred_input_el).parents('.item-form'),
+                if_new_focus_not_belong_current_item = !new_focus_form.is(blurred_form);
+
+            // If new focus is different el but belong to same form (e.g. input & update-btn), then should not hide edit mode
+            if ( if_new_focus_not_belong_current_item ) {
               var blurred_item_form = $(blurred_input_el).parents('.item-form')[0],
                   input_el = $(blurred_item_form).find('.content-input')[0];
 
