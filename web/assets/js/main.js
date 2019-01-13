@@ -144,9 +144,11 @@ function loadChecklists(checklist_data) {
 
 function setChecklistItemsModal(checklist_data) {
   var checklist_items_api = 'api/checklist_items.php'; // relative path to the html page
+      checklist_api = 'api/checklists.php';
 
 
   getChecklistItemsModal();
+  onTitleEdit();
 
 
   function getChecklistItemsModal() {
@@ -156,12 +158,64 @@ function setChecklistItemsModal(checklist_data) {
           checklist_id = trigger_btn.dataset.checklist_id,
           checklist_title = trigger_btn.innerText;
 
-      $(modal).find('.checklist-title').text(checklist_title);
+      $(modal).find('.checklist-title-form')[0].dataset.checklist_id = checklist_id;
+      $(modal).find('.checklist-title-input')[0].value = checklist_title;
+      $(modal).find('.checklist-title-input')[0].defaultValue = checklist_title;
 
       checklist_data.checklist_id = checklist_id;
       checklist_data.checklist_title = checklist_title;
       getItemsByChecklistId(checklist_id);
     });
+  }
+
+
+  function onTitleEdit() {
+    $('.modal-header').on('submit', '.checklist-title-form',
+      function(e) {
+        var title_form_el = this,
+            title_input_el = $(title_form_el).find('.checklist-title-input')[0];
+
+        e.preventDefault();
+        document.activeElement.blur();
+
+        if (title_input_el.value == '') {
+          title_input_el.value = title_input_el.defaultValue;
+        } else {
+          $.ajax({
+            type: 'POST',
+            url: checklist_api,
+            dataType: 'json',
+            data: {
+              functionname: 'updateChecklist',
+              arguments: JSON.stringify({id: title_form_el.dataset.checklist_id, 
+                                         title: title_input_el.value
+                                        })
+            },
+            success: function(res, res_status) {
+              var updated_title = JSON.parse(res['result'])['title'];
+              title_input_el.value = updated_title;
+              title_input_el.defaultValue = updated_title;
+            },
+            error: function(xhr, ajaxOptions, throwError) {
+              alert('Sorry, failed to update! :( Please try again.');
+              title_input_el.value = title_input_el.defaultValue; // Return to previous title if failed
+  
+              console.log(ajaxOptions)
+              console.log(throwError)
+            }
+          });
+        }
+        
+      }
+    );
+
+
+    $('.modal-header').on('focusout', '.checklist-title-input',
+      function(e) {
+        var title_input_el = this;
+        title_input_el.value = title_input_el.defaultValue;
+      }
+    );
   }
 
 
