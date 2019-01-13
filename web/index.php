@@ -30,7 +30,10 @@
           <span>
             <i class="far fa-check-square align-middle m-2"></i>
           </span>
-          <h6 class="checklist-title" id="checklist-modal-label">Checklist</h6>
+          <!-- <h6 class="checklist-title" id="checklist-modal-label">Checklist</h6> -->
+          <form class="checklist-title-form" data-checklist_id="">
+            <input type="text" class="checklist-title-input" value="Checklist">
+          </form>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>

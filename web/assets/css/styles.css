@@ -24,8 +24,9 @@
 
 
 /* ----------Checklist Header---------- */
-.checklist-title {
-  padding-top: 7px;
+.checklist-title-input {
+  margin-top: 2px;
+  border: none;
 }
 .checklist-division {
   margin-top: .1rem;
