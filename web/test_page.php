@@ -48,9 +48,9 @@ require_once __DIR__.'/init.php';
 
 // var_dump(createChecklist($checklist_data));
 // var_dump(updateChecklist($checklist_json));
-// var_dump(deleteChecklistById($new_data['id']));
+var_dump(deleteChecklistById('5c3ad5565f51e') );
 
-var_dump(getAllChecklists());
+// var_dump(getAllChecklists());
 
 
 ?>

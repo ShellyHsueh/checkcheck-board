@@ -251,8 +251,6 @@
     // For main functions
 
     function onItemUpdate(item_form_el) {
-      console.log(item_form_el)
-      console.log(item_form_el.dataset.item_id)
       var item_data = {
         id: item_form_el.dataset.item_id,
         checklist_id: item_form_el.dataset.checklist_id,

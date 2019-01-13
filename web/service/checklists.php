@@ -39,10 +39,11 @@ function updateChecklist($data_json) {
 // Return: deleted checklist
 function deleteChecklistById($id) {
   // Delete checklist items first
-  $db_checklistitems = ChecklistItems::find_all_by_checklist_id($id);
-  if (!empty($db_checklistitems)) {
-    $db_checklistitems->delete();
-  }
+  ChecklistItems::delete_all([
+    'conditions' => [
+      'checklist_id' => $id
+    ]
+  ]);
 
   // Delete checklist and items if exists
   $db_checklist = Checklists::find_by_id($id);

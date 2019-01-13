@@ -25,13 +25,13 @@
   <div id="checklists_container" class="row col-12 mt-2"></div>
   <div class="modal fade" id="checklist-modal" tabindex="-1" role="dialog" aria-labelledby="checklist-modal-label" aria-hidden="true">
     <div class="modal-dialog" role="document">
-      <div class="modal-content">
+      <div class="modal-content" data-checklist_id="">
         <div class="modal-header">
           <span>
             <i class="far fa-check-square align-middle m-2"></i>
           </span>
           <!-- <h6 class="checklist-title" id="checklist-modal-label">Checklist</h6> -->
-          <form class="checklist-title-form" data-checklist_id="">
+          <form class="checklist-title-form">
             <input type="text" class="checklist-title-input" value="Checklist">
           </form>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -39,6 +39,9 @@
           </button>
         </div>
         <div id="checklist-modal-body" class="modal-body"></div>
+        <div class="modal-footer">
+          <button type="button" class="delete-checklist btn btn-outline-danger btn-sm">Delete Checklist</button>
+        </div>
       </div>
     </div>
   </div>

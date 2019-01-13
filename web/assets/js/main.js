@@ -148,6 +148,7 @@ function setChecklistItemsModal(checklist_data) {
 
 
   getChecklistItemsModal();
+  onChecklistDelete();
   onTitleEdit();
 
 
@@ -158,7 +159,7 @@ function setChecklistItemsModal(checklist_data) {
           checklist_id = trigger_btn.dataset.checklist_id,
           checklist_title = trigger_btn.innerText;
 
-      $(modal).find('.checklist-title-form')[0].dataset.checklist_id = checklist_id;
+      $(modal).find('.modal-content')[0].dataset.checklist_id = checklist_id;
       $(modal).find('.checklist-title-input')[0].value = checklist_title;
       $(modal).find('.checklist-title-input')[0].defaultValue = checklist_title;
 
@@ -169,10 +170,36 @@ function setChecklistItemsModal(checklist_data) {
   }
 
 
+  function onChecklistDelete() {
+    $('.modal-content').on('click', '.delete-checklist', 
+      function(e) {
+        var modal_content_el = e.delegateTarget,
+            checklist_id = modal_content_el.dataset.checklist_id;
+
+        $.ajax({
+          type: 'POST',
+          url: checklist_api,
+          dataType: 'json',
+          data: {
+            functionname: 'deleteChecklistById',
+            arguments: checklist_id
+          },
+          success: function(res, res_status) {
+            var menu_btn = $(document).find('button[data-checklist_id="' + modal_content_el.dataset.checklist_id + '"]');
+            menu_btn.remove();
+            $(modal_content_el).parents('.modal').modal('hide');
+          }
+        });
+      }
+    );
+  }
+
+
   function onTitleEdit() {
     $('.modal-header').on('submit', '.checklist-title-form',
       function(e) {
         var title_form_el = this,
+            modal_content_el = $(title_form_el).parents('.modal-content')[0],
             title_input_el = $(title_form_el).find('.checklist-title-input')[0];
 
         e.preventDefault();
@@ -187,7 +214,7 @@ function setChecklistItemsModal(checklist_data) {
             dataType: 'json',
             data: {
               functionname: 'updateChecklist',
-              arguments: JSON.stringify({id: title_form_el.dataset.checklist_id, 
+              arguments: JSON.stringify({id: modal_content_el.dataset.checklist_id, 
                                          title: title_input_el.value
                                         })
             },
@@ -197,7 +224,7 @@ function setChecklistItemsModal(checklist_data) {
               title_input_el.defaultValue = updated_title;
               
               // Update title text of checklist menu btn
-              var menu_btn = $(document).find('button[data-checklist_id="' + title_form_el.dataset.checklist_id + '"]')[0];
+              var menu_btn = $(document).find('button[data-checklist_id="' + modal_content_el.dataset.checklist_id + '"]')[0];
               menu_btn.innerText = updated_title;
 
               document.activeElement.blur();
