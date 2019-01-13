@@ -1,14 +1,18 @@
 $(document).ready(function() {
-  main();
+  var default_checklist_data = defaultChecklistDataAndItemEditEvents();
+
+  loadChecklists(default_checklist_data);
+  setChecklistItemsModal(default_checklist_data);
+  checklistPopover();
 });
 
 
 
-function main(data) {
-  var checklist_items_api = 'api/checklist_items.php'; // relative path to the html page
-      data = {
-        checklist_id: '5c38a344d7725',
-        checklist_title: 'Checklist 1',
+function defaultChecklistDataAndItemEditEvents() {
+  var checklist_items_api = 'api/checklist_items.php', // relative path to the html page
+      default_checklist_data = {
+        checklist_id: '',
+        checklist_title: '',
         events: {
           'onItemDelete': onItemDelete,
           'onItemUpdate': onItemUpdate,
@@ -18,31 +22,11 @@ function main(data) {
       };
 
 
-  getItemsByChecklistId(data.checklist_id);
+  return default_checklist_data;
 
 
-  // Get items data from DB and render checklist
-  function getItemsByChecklistId(checklist_id) {
-    $.ajax({
-      type: 'POST',
-      url: checklist_items_api,
-      dataType: 'json',
-      data: {
-        functionname: 'getItemsByChecklistId',
-        arguments: checklist_id
-      },
-      success: function(res, res_status) {
-        data.items = JSON.parse(res['result']);
-        setChecklist(data)
-      }
-    });
-  }
-
-
-  function setChecklist(data) {
-    var ck_list = new CCB.uic.CheckList('checklists_container', data);
-  }
-
+  // --------------------------------------------
+  // Private Checklist Events
 
   function onItemDelete(item_el, item_id) {
     if (item_id) {
@@ -67,7 +51,6 @@ function main(data) {
       });
     }
   }
-
 
 
   function onItemUpdate(item_form_el, item_data, updateItemElementData) {
@@ -107,82 +90,196 @@ function main(data) {
       }
     });
   }
+}
+
+
+
+
+function loadChecklists(checklist_data) {
+  // Dependencies
+  var lib = CCB.lib;
+
+  var checklist_items_api = 'api/checklist_items.php', // relative path to the html page
+      checklists_api = 'api/checklists.php';
+
   
+  getAllChecklists();
 
 
-  //--------------------------------------
-  // // Create Checklist ----> Some unexpected results, not look into yet
 
-  // var default_checklist_data = {
-  //   checklist_id: 10,
-  //   checklist_title: 'Checklist',
-  //   // events: {
-  //   //   'onDelete': onDelete,
-  //   //   'onAdd': onAdd
-  //   // },
-  //   items: [
-  //     // {
-  //     //   id: 22,
-  //     //   checked: '',
-  //     //   content: ''
-  //     // }
-  //   ]
-  // };
+  function getAllChecklists() {
+    $.ajax({
+      type: 'POST',
+      url: checklists_api,
+      dataType: 'json',
+      data: {
+        functionname: 'getAllChecklists'
+      },
+      success: function(res, res_status) {
+        var checklists = JSON.parse(res['result']);
+        createChecklistBtns(checklists);
+      }
+    });
+  }
+
+  function createChecklistBtns(checklists) {
+    var checklist_btn_tpl = ' \
+      <button type="button" class="btn btn-light btn-sm btn-block col-md-7 col-12" \
+              data-checklist_id={{id}} data-toggle="modal" data-target="#checklist-modal"> \
+        {{title}} \
+      </button> \
+    ';
+
+    var btns = '';
+    for (var i in checklists) {
+      btns += lib.applyTemplate(checklist_btn_tpl, checklists[i]);
+    }
+    $(btns).appendTo($('#checklists_container'));
+  }
+}
 
 
-  // var create_checklist_popover = ' \
-  //   <form class="checklist_popover_form"> \
-  //     <div class="form-group mb-2"> \
-  //       <label for="checklist_title_input" class="checklist_popover_form_label">Title</label> \
-  //       <input type="text" class="form-control form-control-sm" id="checklist_title_input" value="Checklist"> \
-  //     </div> \
-  //     <button type="submit" class="btn btn-success btn-sm shadow-sm mt-0 create-checklist-btn">Create</button> \
-  //   </form> \
-  // ';
 
-  // onChecklistBtnClick(create_checklist_popover, default_checklist_data);
-  // onChecklistPopoverBlur();
 
-  // function onChecklistBtnClick(popover_content, checklist_data) {
-  //   $('.checklist-popover-btn').popover({
-  //     title: 'New Checklist',
-  //     container: 'body',
-  //     html: true,
-  //     content: popover_content
-  //   })
 
-  //   // After popover shown, add events to popover elements
-  //   $('.checklist-popover-btn').on('shown.bs.popover', function() {
-  //     $('#checklist_title_input').focus();
+function setChecklistItemsModal(checklist_data) {
+  var checklist_items_api = 'api/checklist_items.php'; // relative path to the html page
+
+
+  getChecklistItemsModal();
+
+
+  function getChecklistItemsModal() {
+    $('#checklist-modal').on('show.bs.modal', function(e) {
+      var modal = this,
+          trigger_btn = e.relatedTarget,
+          checklist_id = trigger_btn.dataset.checklist_id,
+          checklist_title = trigger_btn.innerText;
+
+      $(modal).find('.checklist-title').text(checklist_title);
+
+      checklist_data.checklist_id = checklist_id;
+      checklist_data.checklist_title = checklist_title;
+      getItemsByChecklistId(checklist_id);
+    });
+  }
+
+
+  // ----------------------------------------------
+  // Checklist Items
+
+  // Get items data from DB and render checklist
+  function getItemsByChecklistId(checklist_id) {
+    $.ajax({
+      type: 'POST',
+      url: checklist_items_api,
+      dataType: 'json',
+      data: {
+        functionname: 'getItemsByChecklistId',
+        arguments: checklist_id
+      },
+      success: function(res, res_status) {
+        checklist_data.items = JSON.parse(res['result']);
+        setChecklist(checklist_data);
+      }
+    });
+  }
+
+
+  function setChecklist(checklist_data) {
+    var ck_list = new CCB.uic.CheckList('checklist-modal-body', checklist_data);
+  }
+}
+
+
+
+
+function checklistPopover() {
+  var checklists_api = 'api/checklists.php',
+      create_checklist_popover = ' \
+        <form class="checklist_popover_form"> \
+          <div class="form-group mb-2"> \
+            <label for="checklist_title_input" class="checklist_popover_form_label">Title</label> \
+            <input type="text" class="form-control form-control-sm" id="checklist_title_input" value="Checklist"> \
+          </div> \
+          <button type="submit" class="btn btn-success btn-sm shadow-sm mt-0 create-checklist-btn">Create</button> \
+        </form> \
+      ';
+
+
+  onChecklistBtnClick(create_checklist_popover);
+  onChecklistPopoverBlur();
+
+
+  function onChecklistBtnClick(popover_content) {
+    // Init popover event
+    $('.checklist-popover-btn').popover({
+      title: 'New Checklist',
+      container: 'body',
+      html: true,
+      content: popover_content
+    });
+
+
+    // After popover shown, add events to popover elements
+    $('.checklist-popover-btn').on('shown.bs.popover', function() {
+      $('#checklist_title_input').focus();
   
-  //     $('.checklist_popover_form').submit(function(e) {
-  //       e.preventDefault();
-  //       var new_checklist_title = $(this).find('#checklist_title_input').val();
-  //       console.log(new_checklist_title)
-  //       /////// Save to database
+      $('.checklist_popover_form').submit(function(e) {
+        e.preventDefault();
+        var new_checklist_title = $(this).find('#checklist_title_input').val();
+        createNewChecklist(new_checklist_title);
+      })
+    });
 
-  //       $('.checklist-popover-btn').popover('hide');
 
-  //       checklist_data.checklist_title = new_checklist_title;
-  //       new CCB.uic.CheckList('checklists_container', checklist_data);
-  //       $('.items-container .item-form:first').find('.content-input').focus();
+    function createNewChecklist(title) {
+      $.ajax({
+        type: 'POST',
+        url: checklists_api,
+        dataType: 'json',
+        data: {
+          functionname: 'createChecklist',
+          arguments: title
+        },
+        success: function(res, res_status) {
+          var result = JSON.parse(res['result']);
+          createChecklistBtn(result['id'], result['title']);
+          $('.checklist-popover-btn').popover('hide');
+        }
+      });
+    }
 
-  //     })
-  //   })
-  // }
+
+    function createChecklistBtn(id, title) {
+      // Dependencies
+      var lib = CCB.lib;
   
+      var checklist_btn_tpl = ' \
+            <button type="button" class="btn btn-light btn-sm btn-block col-md-7 col-12" \
+                    data-checklist_id={{id}} data-toggle="modal" data-target="#checklist-modal"> \
+              {{title}} \
+            </button> \
+          ';
   
-  // function onChecklistPopoverBlur() {
-  //   // Close popover when clicking outside
-  //   $(document).click(function(e) {
-  //     var target_not_popover_or_btn = !$(e.target).is('.popover-header, .popover-body, .checklist-popover-btn');
-  //     var target_not_within_popover_body = $(e.target).parents('.popover-body').length == 0;
+      var new_btn = lib.applyTemplate(checklist_btn_tpl, {id: id, title: title});
+      $(new_btn).appendTo($('#checklists_container'));
+    }
+  }
+
+
+
+  function onChecklistPopoverBlur() {
+    // Close popover when clicking outside
+    $(document).click(function(e) {
+      var target_not_popover_or_btn = !$(e.target).is('.popover-header, .popover-body, .checklist-popover-btn');
+      var target_not_within_popover_body = $(e.target).parents('.popover-body').length == 0;
   
-  //     if (target_not_popover_or_btn && target_not_within_popover_body) {
-  //       $('.checklist-popover-btn').popover('hide');
-  //     }
-  //   });
-  // }
+      if (target_not_popover_or_btn && target_not_within_popover_body) {
+        $('.checklist-popover-btn').popover('hide');
+      }
+    });
+  }
 
 
 }
