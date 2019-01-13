@@ -46,7 +46,7 @@ function deleteItemByItemId($item_id) {
     $del_res = $db_item->delete(); // Return true if success
 
     if ($del_res) {
-      return $db_item;
+      return getResultArr($db_item);
     }
   }
 }

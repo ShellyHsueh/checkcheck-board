@@ -14,19 +14,7 @@
 
     // HTML templates
     var checklist_tpl = ' \
-          <div class="checklist row col-12 col-md-7" data-checklist_id="{{id}}"> \
-            \
-            <div class="checklist-header"> \
-              <div class="row pl-2"> \
-                <span> \
-                  <i class="far fa-check-square align-middle m-2"></i> \
-                </span> \
-                <h6 class="checklist-title">{{checklist_title}}</h6> \
-              </div> \
-            </div> \
-            \
-            <hr class="checklist-division"> \
-            \
+          <div class="checklist p-2" data-checklist_id="{{id}}"> \
             <div class="items-container w-100"> \
               {{item_forms}} \
               <div class="hidden bottom-of-items-container"></div> \
@@ -56,18 +44,18 @@
     // One-time init procedure
     initChecklist(checklists_container, items);
 
-    // Event handlers
+    // Items Event handlers
     itemMouseEvents($('.items-container'));
     itemFocusBlurEvents($('.items-container'));
     setSortable($('.items-container'));
-    createNewItem($('.checklist'), $('.items-container'));
+    createNewItem($('.checklist'));
     setItemEditFunction($('.items-container'));
     
 
 
 
     //--------------------------------------------------
-    // Main functions
+    // Main functions for checklist items
 
     function initChecklist(checklists_container_el, items) {
       // Sort items by order
@@ -89,7 +77,7 @@
                                                          checklist_title: checklist_title,
                                                          item_forms: item_forms
                                                        });
-      $(checklists_container_el).append(checklist);
+      $(checklists_container_el).html(checklist);
     }
 
 
@@ -186,11 +174,14 @@
 
 
     // Create new empty item and auto focus on it (Not store to DB yet)
-    function createNewItem(checklist_el, items_container_el) {
+    function createNewItem(checklist_el) {
       $(checklist_el).on('click', '.new-item',
         function(e) {
-          var checklist_id = $(checklist_el).data('checklist_id'),
-              new_item_order = $(items_container_el).find('.item-form').length,
+          console.log(e)
+          var current_checklist_el = e.delegateTarget,
+              // current_items_container_el = $(this).parents('.checklist').find('items-container')[0],
+              checklist_id = current_checklist_el.dataset.checklist_id,
+              new_item_order = $(current_checklist_el).find('.item-form').length,
               default_item_data = {
                 id: '',
                 checklist_id: checklist_id,
@@ -198,10 +189,13 @@
                 content: '',
                 order: new_item_order
               },
-              new_item = lib.applyTemplate(item_tpl, default_item_data);
-          
-          $(new_item).insertBefore($('.bottom-of-items-container'))
-          var new_item_input = $('.items-container .item-form:last .content-input')[0];
+              new_item = lib.applyTemplate(item_tpl, default_item_data),
+              checklist_bottom_el = $(current_checklist_el).find('.bottom-of-items-container')[0];
+
+              console.log(checklist_bottom_el)
+          $(new_item).insertBefore(checklist_bottom_el);
+          var new_item_input = $(current_checklist_el).find('.item-form:last .content-input')[0];
+          console.log(new_item_input)
           $(new_item_input).focus();
         }
       );

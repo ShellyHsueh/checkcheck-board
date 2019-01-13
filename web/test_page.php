@@ -1,6 +1,10 @@
 <?php
 
-// require_once __DIR__.'/init.php';
+require_once __DIR__.'/init.php';
+
+
+// -----------------------------------
+// Test checklist_item services
 
 // // $item_id = uniqid();
 // // $checklist_id = uniqid();
@@ -28,6 +32,25 @@
 // // var_dump(getItemByItemId($item_id)['checklist_id']);
 // // var_dump(getItemsByChecklistId($checklist_id));
 // // var_dump(deleteItemByItemId($item_id));
+
+
+// -----------------------------------
+// Test checklist services
+
+// $checklist_data = [
+//   'title' => 'Checklist title'
+// ];
+// $new_data = [
+//   'id' => '5c3acd6553b14',
+//   'title' => 'New title'
+// ];
+// $checklist_json = json_encode($new_data, true);
+
+// var_dump(createChecklist($checklist_data));
+// var_dump(updateChecklist($checklist_json));
+// var_dump(deleteChecklistById($new_data['id']));
+
+var_dump(getAllChecklists());
 
 
 ?>
