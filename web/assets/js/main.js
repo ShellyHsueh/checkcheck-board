@@ -176,7 +176,7 @@ function setChecklistItemsModal(checklist_data) {
             title_input_el = $(title_form_el).find('.checklist-title-input')[0];
 
         e.preventDefault();
-        document.activeElement.blur();
+        
 
         if (title_input_el.value == '') {
           title_input_el.value = title_input_el.defaultValue;
@@ -195,6 +195,12 @@ function setChecklistItemsModal(checklist_data) {
               var updated_title = JSON.parse(res['result'])['title'];
               title_input_el.value = updated_title;
               title_input_el.defaultValue = updated_title;
+              
+              // Update title text of checklist menu btn
+              var menu_btn = $(document).find('button[data-checklist_id="' + title_form_el.dataset.checklist_id + '"]')[0];
+              menu_btn.innerText = updated_title;
+
+              document.activeElement.blur();
             },
             error: function(xhr, ajaxOptions, throwError) {
               alert('Sorry, failed to update! :( Please try again.');
