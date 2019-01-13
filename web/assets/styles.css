@@ -47,6 +47,7 @@ input[type='checkbox'] {
   -webkit-appearance: none;
   /* Remove default style for Firefox */
   -moz-appearance: none;
+  appearance: none;
 
   /* Init style */
   width: 1.2em;

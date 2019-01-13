@@ -5,7 +5,8 @@
 
 <head>
   <?php echoBootstrapAndJqueryDependencies(); ?>
-  <link rel="stylesheet" href="assets/styles/styles.css">
+  <link rel="stylesheet" href="assets/styles.css">
+  <link rel="stylesheet" href="assets/css/styles.css">
 
   <script src="assets/js/lib/namespace.js"></script>
   <script src="assets/js/lib/lib.js"></script>
